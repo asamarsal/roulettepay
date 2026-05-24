@@ -426,21 +426,21 @@ function HeroSection() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden px-5 pb-16 pt-28 sm:px-8 sm:pb-24 lg:pt-36"
+      className="relative overflow-hidden px-5 pb-16 pt-28 sm:px-8 sm:pb-24 lg:pt-16"
     >
-      <div className="pointer-events-none absolute left-1/2 top-16 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(246,200,95,0.16),transparent_68%)] blur-2xl" />
+      <div className="pointer-events-none absolute left-1/2 top-4 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(246,200,95,0.16),transparent_68%)] blur-2xl" />
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr]">
         <div className="relative z-10">
           <h1
             data-reveal="left"
-            className="max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl"
+            className="-mt-4 max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl"
           >
             Spin. Win.
             <span className="block bg-[linear-gradient(135deg,#FFE69B,#F6C85F,#B67812)] bg-clip-text text-transparent">
               Get Paid.
             </span>
           </h1>
-          <div data-reveal="top" className="mt-2 inline-block">
+          <div data-reveal="top" className="mt-4 inline-block">
             <ArbitrumBadge />
           </div>
           <div data-reveal="bottom" className="relative mt-4 lg:hidden">
@@ -457,7 +457,7 @@ function HeroSection() {
           <p
             data-reveal="left"
             data-delay="0.1"
-            className="mt-2 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-lg"
+            className="mt-2 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-md"
           >
             The fair and transparent way to run giveaways onchain. Spin the
             roulette, pick a winner, and pay instantly.
