@@ -288,7 +288,7 @@ function GlassCard({
   return (
     <div
       {...props}
-      className={`rounded-[18px] border border-[var(--rp-border)] bg-[var(--rp-surface)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_0_48px_var(--rp-shadow)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-[var(--rp-border-gold)] hover:shadow-[0_0_70px_var(--rp-shadow)] ${className}`}
+      className={`rounded-[18px] border border-[var(--rp-border)] bg-[var(--rp-surface)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-[var(--rp-border-gold)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_0_30px_var(--rp-shadow)] ${className}`}
     >
       {children}
     </div>
@@ -413,9 +413,9 @@ function Navbar() {
 
 function ArbitrumBadge() {
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] px-2 py-2 shadow-[0_0_30px_var(--rp-shadow)] backdrop-blur-md">
-      <IconImage src={assets.arbitrum} alt="" className="h-8 w-8" />
-      <span className="text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--rp-gold)]">
+    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] px-3 py-1.5 shadow-[0_0_30px_var(--rp-shadow)] backdrop-blur-md">
+      <IconImage src={assets.arbitrum} alt="" className="h-5 w-5" />
+      <span className="text-[9px] font-normal uppercase tracking-[0.24em] text-[var(--rp-gold)]">
         Powered by Arbitrum
       </span>
     </div>
@@ -431,18 +431,29 @@ function HeroSection() {
       <div className="pointer-events-none absolute left-1/2 top-16 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(246,200,95,0.16),transparent_68%)] blur-2xl" />
       <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr]">
         <div className="relative z-10">
-          <div data-reveal="top">
-            <ArbitrumBadge />
-          </div>
           <h1
             data-reveal="left"
-            className="mt-8 max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl"
+            className="max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl"
           >
             Spin. Win.
             <span className="block bg-[linear-gradient(135deg,#FFE69B,#F6C85F,#B67812)] bg-clip-text text-transparent">
               Get Paid.
             </span>
           </h1>
+          <div data-reveal="top" className="mt-6 inline-block">
+            <ArbitrumBadge />
+          </div>
+          <div data-reveal="bottom" className="relative mt-8 lg:hidden">
+            <div className="pointer-events-none absolute inset-x-8 bottom-7 h-20 rounded-full bg-[rgba(246,200,95,0.25)] blur-3xl" />
+            <Image
+              src={assets.hero}
+              alt="Glowing RoulettePay roulette wheel"
+              width={820}
+              height={820}
+              priority
+              className="relative mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
+            />
+          </div>
           <p
             data-reveal="left"
             data-delay="0.1"
@@ -465,7 +476,7 @@ function HeroSection() {
               variant="outline"
               className="w-full font-black sm:w-auto"
               trailingIcon={
-                <IconImage src={assets.play} alt="" className="h-5 w-5" />
+                <IconImage src={assets.play} alt="" className="h-8 w-8" />
               }
             >
               How It Works
@@ -493,7 +504,7 @@ function HeroSection() {
           </div>
         </div>
 
-        <div data-reveal="right" data-delay="0.1" className="relative">
+        <div data-reveal="right" data-delay="0.1" className="relative hidden lg:block">
           <div className="pointer-events-none absolute inset-x-8 bottom-7 h-20 rounded-full bg-[rgba(246,200,95,0.25)] blur-3xl" />
           <Image
             src={assets.hero}
@@ -718,6 +729,20 @@ function FinalCTA() {
   );
 }
 
+function SocialLink({ social }: { social: { icon: string; href: string } }) {
+  return (
+    <a
+      href={social.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="RoulettePay social link"
+      className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border-gold)] bg-[var(--rp-surface)] transition-all duration-[600ms] hover:[transform:rotateY(360deg)]"
+    >
+      <IconImage src={social.icon} alt="" className="h-14 w-14" />
+    </a>
+  );
+}
+
 function Footer() {
   return (
     <footer className="border-t border-[var(--rp-border-gold)] px-5 py-12 sm:px-8">
@@ -737,16 +762,7 @@ function Footer() {
               { icon: assets.socialTelegram, href: "http://t.me/asamarsal" },
               { icon: assets.socialGithub, href: "https://github.com/asamarsal/roulettepay" }
             ].map((social) => (
-              <a
-                key={social.icon}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="RoulettePay social link"
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border-gold)] bg-[var(--rp-surface)]"
-              >
-                <IconImage src={social.icon} alt="" className="h-14 w-14" />
-              </a>
+              <SocialLink key={social.icon} social={social} />
             ))}
           </div>
           <div className="mt-6">
