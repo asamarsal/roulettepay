@@ -367,7 +367,7 @@ function Navbar() {
 
         <div className="hidden items-center justify-self-end gap-3 lg:flex">
           <ThemeToggle />
-          <GoldButton href="#launch" className="min-h-11 px-6 py-2" showTrailingIcon={false}>
+          <GoldButton href="/dashboard" className="min-h-11 px-6 py-2" showTrailingIcon={false}>
             Launch App
           </GoldButton>
         </div>
@@ -401,7 +401,7 @@ function Navbar() {
                 {item.label}
               </a>
             ))}
-            <GoldButton href="#launch" className="w-full" showTrailingIcon={false}>
+            <GoldButton href="/dashboard" className="w-full" showTrailingIcon={false}>
               Launch App
             </GoldButton>
           </div>
@@ -468,7 +468,7 @@ function HeroSection() {
             data-delay="0.18"
             className="mt-9 flex flex-col gap-4 sm:flex-row"
           >
-            <GoldButton href="#launch" className="w-full sm:w-auto" showTrailingIcon={false}>
+            <GoldButton href="/dashboard" className="w-full sm:w-auto" showTrailingIcon={false}>
               Launch App
             </GoldButton>
             <GoldButton
@@ -716,7 +716,7 @@ function FinalCTA() {
             provably fair, transparent, and instant giveaways.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <GoldButton href="#home" className="w-full sm:w-auto" showTrailingIcon={false}>
+            <GoldButton href="/dashboard" className="w-full sm:w-auto" showTrailingIcon={false}>
               Launch App
             </GoldButton>
             <GoldButton href="#home" variant="outline" className="w-full sm:w-auto">
