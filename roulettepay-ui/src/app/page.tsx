@@ -433,7 +433,7 @@ function HeroSection() {
         <div className="relative z-10">
           <h1
             data-reveal="left"
-            className="-mt-4 max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl"
+            className="max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl lg:pt-18"
           >
             Spin. Win.
             <span className="block bg-[linear-gradient(135deg,#FFE69B,#F6C85F,#B67812)] bg-clip-text text-transparent">
@@ -451,13 +451,13 @@ function HeroSection() {
               width={820}
               height={820}
               priority
-              className="relative mx-auto h-auto w-full max-w-[320px] object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
+              className="relative mx-auto h-auto w-full max-w-[280px] object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
             />
           </div>
           <p
             data-reveal="left"
             data-delay="0.1"
-            className="mt-2 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-md"
+            className="mt-2 max-w-xl text-sm leading-6 text-[var(--rp-muted)] sm:text-lg sm:leading-8"
           >
             The fair and transparent way to run giveaways onchain. Spin the
             roulette, pick a winner, and pay instantly.
