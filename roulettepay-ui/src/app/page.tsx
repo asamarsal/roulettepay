@@ -641,7 +641,7 @@ function MoreReasons() {
 }
 
 function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(3);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <section id="faq" className="px-5 py-16 sm:px-8 sm:py-24">

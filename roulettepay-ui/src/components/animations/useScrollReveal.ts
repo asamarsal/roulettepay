@@ -59,7 +59,7 @@ export function useScrollReveal() {
               trigger: el,
               start: "top 84%",
               end: "bottom 16%",
-              toggleActions: "play reverse play reverse",
+              toggleActions: "play none none none",
             },
           },
         );
