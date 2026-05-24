@@ -440,11 +440,11 @@ function HeroSection() {
               Get Paid.
             </span>
           </h1>
-          <div data-reveal="top" className="mt-6 inline-block">
+          <div data-reveal="top" className="mt-2 inline-block">
             <ArbitrumBadge />
           </div>
-          <div data-reveal="bottom" className="relative mt-8 lg:hidden">
-            <div className="pointer-events-none absolute inset-x-8 bottom-7 h-20 rounded-full bg-[rgba(246,200,95,0.25)] blur-3xl" />
+          <div data-reveal="bottom" className="relative mt-4 lg:hidden">
+            <div className="pointer-events-none absolute inset-x-8 bottom-4 h-20 rounded-full bg-[rgba(246,200,95,0.25)] blur-3xl" />
             <Image
               src={assets.hero}
               alt="Glowing RoulettePay roulette wheel"
@@ -457,7 +457,7 @@ function HeroSection() {
           <p
             data-reveal="left"
             data-delay="0.1"
-            className="mt-7 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-xl"
+            className="mt-2 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-lg"
           >
             The fair and transparent way to run giveaways onchain. Spin the
             roulette, pick a winner, and pay instantly.
