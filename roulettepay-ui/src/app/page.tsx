@@ -4,16 +4,18 @@ import Image from "next/image";
 import type { ComponentPropsWithoutRef } from "react";
 import { useState } from "react";
 import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 import { useScrollReveal } from "@/src/components/animations/useScrollReveal";
 
 const assets = {
-  logo: "/logo/png/roulettepay-original.png",
+  logo: "/logo/png/roulettepay-lightmode.png",
+  logoLight: "/logo/png/roulettepay-original.png",
   logoIcon: "/logo/png/roulette-icon.png",
   hero: "/illustration/Rouletteboard.png",
   arbitrum: "/icon/arbitrum-coin.png",
   play: "/icon/play-gold.png",
   socialX: "/icon/twitter-gold.png",
-  socialDiscord: "/icon/15.png",
+  socialDiscord: "/icon/discord-gold.png",
   socialTelegram: "/icon/telegram-gold.png",
   socialGithub: "/icon/github-gold.png",
 };
@@ -70,7 +72,7 @@ const howItWorks = [
   {
     step: "2",
     title: "Spin the Roulette",
-    description: "The roulette spins with provably fair randomness on-chain.",
+    description: "The roulette spins with provably fair randomness onchain.",
     icon: "/icon/roulette-color.png",
     reveal: "bottom",
   },
@@ -93,7 +95,7 @@ const howItWorks = [
 const whyChoose = [
   {
     title: "Provably Fair",
-    description: "All randomness is verifiable on-chain. No manipulation, ever.",
+    description: "All randomness is verifiable onchain. No manipulation, ever.",
     icon: "/icon/weightscale-gold.png",
     reveal: "left",
   },
@@ -145,7 +147,7 @@ const faqs = [
   {
     question: "How does fairness and randomness work?",
     answer:
-      "RoulettePay uses verifiable on-chain randomness so winner selection can be checked transparently. The visual wheel is only the animation, while the final result is settled by smart contract logic.",
+      "RoulettePay uses verifiable onchain randomness so winner selection can be checked transparently. The visual wheel is only the animation, while the final result is settled by smart contract logic.",
     icon: "/icon/shield-border-gold.png",
   },
   {
@@ -163,7 +165,7 @@ const faqs = [
   {
     question: "What assets are supported?",
     answer:
-      "RoulettePay supports ETH, USDC, USDT and more on-chain assets depending on the deployed contract configuration.",
+      "RoulettePay supports ETH, USDC, USDT and more onchain assets depending on the deployed contract configuration.",
     icon: "/icon/usdc-coin.png",
   },
   {
@@ -220,8 +222,26 @@ function ThemeToggle() {
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="group inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] text-sm font-black text-[var(--rp-gold)] shadow-[0_0_28px_var(--rp-shadow)] backdrop-blur-xl transition hover:border-[var(--rp-border-gold)]"
     >
-      {isDark ? "L" : "D"}
+      {isDark ? <Sun size={19} strokeWidth={2.6} /> : <Moon size={19} strokeWidth={2.6} />}
     </button>
+  );
+}
+
+function BrandLogo({ className = "" }: { className?: string }) {
+  const { resolvedTheme } = useTheme();
+  const logoSrc = resolvedTheme === "light" ? assets.logoLight : assets.logo;
+
+  return (
+    <span className={`relative block h-12 w-[190px] sm:w-[222px] ${className}`}>
+      <Image
+        src={logoSrc}
+        alt="RoulettePay"
+        fill
+        priority
+        sizes="222px"
+        className="object-contain object-left"
+      />
+    </span>
   );
 }
 
@@ -230,11 +250,15 @@ function GoldButton({
   href = "#",
   variant = "solid",
   className = "",
+  trailingIcon,
+  showTrailingIcon = true,
 }: {
   children: React.ReactNode;
   href?: string;
   variant?: "solid" | "outline";
   className?: string;
+  trailingIcon?: React.ReactNode;
+  showTrailingIcon?: boolean;
 }) {
   const styles =
     variant === "solid"
@@ -247,9 +271,11 @@ function GoldButton({
       className={`inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border px-7 py-3 text-sm font-extrabold transition duration-300 ${styles} ${className}`}
     >
       {children}
-      <span aria-hidden="true" className="text-lg leading-none">
-        -&gt;
-      </span>
+      {showTrailingIcon ? trailingIcon ?? (
+        <span aria-hidden="true" className="text-lg leading-none">
+          -&gt;
+        </span>
+      ) : null}
     </a>
   );
 }
@@ -318,26 +344,18 @@ function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--rp-border)] bg-[rgba(248,245,237,0.72)] backdrop-blur-2xl dark:bg-[rgba(2,7,17,0.62)]">
-      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <a href="#home" className="relative block h-12 w-[190px] sm:w-[222px]">
-          <Image
-            src={assets.logo}
-            alt="RoulettePay"
-            fill
-            priority
-            sizes="222px"
-            className="object-contain object-left"
-          />
+      <nav className="grid h-20 w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-5 sm:px-8">
+        <a href="#home" className="justify-self-start">
+          <BrandLogo />
         </a>
 
-        <div className="hidden items-center gap-10 lg:flex">
+        <div className="hidden items-center justify-center gap-10 lg:flex">
           {navItems.map((item, index) => (
             <a
               key={item.href}
               href={item.href}
-              className={`relative text-sm font-semibold transition hover:text-[var(--rp-gold)] ${
-                index === 0 ? "text-[var(--rp-gold)]" : "text-[var(--rp-text)]"
-              }`}
+              className={`relative text-sm font-semibold transition hover:text-[var(--rp-gold)] ${index === 0 ? "text-[var(--rp-gold)]" : "text-[var(--rp-text)]"
+                }`}
             >
               {item.label}
               {index === 0 ? (
@@ -347,14 +365,14 @@ function Navbar() {
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center justify-self-end gap-3 lg:flex">
           <ThemeToggle />
-          <GoldButton href="#launch" className="min-h-11 px-6 py-2">
+          <GoldButton href="#launch" className="min-h-11 px-6 py-2" showTrailingIcon={false}>
             Launch App
           </GoldButton>
         </div>
 
-        <div className="flex items-center gap-3 lg:hidden">
+        <div className="flex items-center justify-self-end gap-3 lg:hidden">
           <ThemeToggle />
           <button
             type="button"
@@ -383,7 +401,7 @@ function Navbar() {
                 {item.label}
               </a>
             ))}
-            <GoldButton href="#launch" className="w-full">
+            <GoldButton href="#launch" className="w-full" showTrailingIcon={false}>
               Launch App
             </GoldButton>
           </div>
@@ -395,9 +413,9 @@ function Navbar() {
 
 function ArbitrumBadge() {
   return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] px-4 py-2 shadow-[0_0_30px_var(--rp-shadow)] backdrop-blur-xl">
-      <IconImage src={assets.arbitrum} alt="" className="h-5 w-5" />
-      <span className="text-[10px] font-black uppercase tracking-[0.24em] text-[var(--rp-gold)]">
+    <div className="inline-flex items-center gap-2 rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] px-2 py-2 shadow-[0_0_30px_var(--rp-shadow)] backdrop-blur-md">
+      <IconImage src={assets.arbitrum} alt="" className="h-8 w-8" />
+      <span className="text-[10px] font-normal uppercase tracking-[0.24em] text-[var(--rp-gold)]">
         Powered by Arbitrum
       </span>
     </div>
@@ -430,7 +448,7 @@ function HeroSection() {
             data-delay="0.1"
             className="mt-7 max-w-xl text-lg leading-8 text-[var(--rp-muted)] sm:text-xl"
           >
-            The fair and transparent way to run giveaways on-chain. Spin the
+            The fair and transparent way to run giveaways onchain. Spin the
             roulette, pick a winner, and pay instantly.
           </p>
 
@@ -439,13 +457,16 @@ function HeroSection() {
             data-delay="0.18"
             className="mt-9 flex flex-col gap-4 sm:flex-row"
           >
-            <GoldButton href="#launch" className="w-full sm:w-auto">
+            <GoldButton href="#launch" className="w-full sm:w-auto" showTrailingIcon={false}>
               Launch App
             </GoldButton>
             <GoldButton
               href="#how-it-works"
               variant="outline"
-              className="w-full sm:w-auto"
+              className="w-full font-black sm:w-auto"
+              trailingIcon={
+                <IconImage src={assets.play} alt="" className="h-5 w-5" />
+              }
             >
               How It Works
             </GoldButton>
@@ -547,7 +568,7 @@ function HowItWorks() {
   return (
     <section id="how-it-works" className="px-5 py-16 sm:px-8 sm:py-24">
       <SectionHeader
-        label="Simple. Fair. On-chain."
+        label="Simple. Fair. Onchain."
         title="How RoulettePay Works"
       />
       <div className="mx-auto mt-12 grid max-w-7xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -676,7 +697,7 @@ function FinalCTA() {
           <h2 className="max-w-2xl text-3xl font-black tracking-tight text-[var(--rp-text)] sm:text-5xl">
             Ready to launch your next{" "}
             <span className="text-[var(--rp-gold)]">
-              fair on-chain giveaway?
+              fair onchain giveaway?
             </span>
           </h2>
           <p className="mt-5 max-w-xl text-base leading-7 text-[var(--rp-muted)]">
@@ -684,7 +705,7 @@ function FinalCTA() {
             provably fair, transparent, and instant giveaways.
           </p>
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-            <GoldButton href="#home" className="w-full sm:w-auto">
+            <GoldButton href="#home" className="w-full sm:w-auto" showTrailingIcon={false}>
               Launch App
             </GoldButton>
             <GoldButton href="#home" variant="outline" className="w-full sm:w-auto">
@@ -702,32 +723,31 @@ function Footer() {
     <footer className="border-t border-[var(--rp-border-gold)] px-5 py-12 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.5fr_repeat(4,1fr)]">
         <div data-reveal="bottom">
-          <a href="#home" className="relative block h-14 w-[230px]">
-            <Image
-              src={assets.logo}
-              alt="RoulettePay"
-              fill
-              sizes="230px"
-              className="object-contain object-left"
-            />
+          <a href="#home" className="block">
+            <BrandLogo className="h-14 w-[230px]" />
           </a>
           <p className="mt-5 max-w-sm text-base leading-7 text-[var(--rp-muted)]">
-            The fair and transparent way to run on-chain giveaways. Spin the
+            The fair and transparent way to run onchain giveaways. Spin the
             roulette, pick a winner, and pay instantly.
           </p>
           <div className="mt-6 flex gap-3">
-            {[assets.socialX, assets.socialDiscord, assets.socialTelegram, assets.socialGithub].map(
-              (icon) => (
-                <a
-                  key={icon}
-                  href="#home"
-                  aria-label="RoulettePay social link"
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border-gold)] bg-[var(--rp-surface)]"
-                >
-                  <IconImage src={icon} alt="" className="h-6 w-6" />
-                </a>
-              ),
-            )}
+            {[
+              { icon: assets.socialX, href: "http://twitter.com/exluminated" },
+              { icon: assets.socialDiscord, href: "https://discord.gg/ahnfu" },
+              { icon: assets.socialTelegram, href: "http://t.me/asamarsal" },
+              { icon: assets.socialGithub, href: "https://github.com/asamarsal/roulettepay" }
+            ].map((social) => (
+              <a
+                key={social.icon}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="RoulettePay social link"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border-gold)] bg-[var(--rp-surface)]"
+              >
+                <IconImage src={social.icon} alt="" className="h-14 w-14" />
+              </a>
+            ))}
           </div>
           <div className="mt-6">
             <ArbitrumBadge />
