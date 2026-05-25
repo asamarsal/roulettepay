@@ -69,7 +69,7 @@ function Panel({
 }) {
   return (
     <section
-      className={`rounded-xl border border-white/10 bg-[#0d1728]/82 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_70px_rgba(0,0,0,0.2)] backdrop-blur-xl ${className}`}
+      className={`rounded-xl border border-white/10 bg-[#0d1728]/82 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_24px_70px_rgba(0,0,0,0.2)] backdrop-blur-xl sm:p-4 ${className}`}
     >
       {children}
     </section>
@@ -176,12 +176,60 @@ function TopBar() {
             <ChevronDown size={16} />
           </button>
         </div>
-        <SmallButton variant="blue" className="ml-auto md:ml-0">
+        <SmallButton variant="blue" className="ml-auto px-3 md:ml-0 md:px-4">
           <Rocket size={17} />
           <span className="hidden sm:inline">Launch Event</span>
         </SmallButton>
       </div>
     </header>
+  );
+}
+
+function MobileQuickNav() {
+  return (
+    <div className="border-b border-white/10 bg-[#07101e]/86 px-3 py-3 backdrop-blur-xl lg:hidden">
+      <div className="mb-3 grid grid-cols-2 gap-2">
+        <div className="rounded-xl border border-white/10 bg-[#0a1424] px-3 py-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+            Network
+          </p>
+          <p className="mt-1 flex items-center gap-2 text-sm font-black text-white">
+            <Image src="/icon/arbitrum-coin.png" alt="" width={20} height={20} />
+            Arbitrum
+            <span className="ml-auto h-2 w-2 rounded-full bg-emerald-400" />
+          </p>
+        </div>
+        <div className="rounded-xl border border-white/10 bg-[#071622] px-3 py-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+            Wallet
+          </p>
+          <p className="mt-1 flex items-center gap-2 truncate text-sm font-black text-emerald-400">
+            <span className="h-2.5 w-2.5 rounded-full border-2 border-emerald-400" />
+            Connected
+          </p>
+        </div>
+      </div>
+      <nav className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {navItems.map(([label, Icon]) => {
+          const active = label === "Roulette Pay";
+
+          return (
+            <a
+              key={label}
+              href="#admin"
+              className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-black ${
+                active
+                  ? "border-blue-500/60 bg-blue-600/18 text-blue-300"
+                  : "border-white/10 bg-white/[0.03] text-slate-300"
+              }`}
+            >
+              <Icon size={15} />
+              {label}
+            </a>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
 
@@ -326,7 +374,38 @@ function PrizeConfig() {
           </div>
         </label>
       </div>
-      <div className="mt-4 overflow-hidden rounded-lg border border-white/10">
+      <div className="mt-4 grid gap-3 sm:hidden">
+        {[
+          ["1", "Winner 1", "500.00 USDC", "50%", "bg-amber-400 text-slate-950"],
+          ["2", "Winner 2", "300.00 USDC", "30%", "bg-slate-300 text-slate-900"],
+          ["3", "Winner 3", "200.00 USDC", "20%", "bg-orange-400 text-white"],
+        ].map((row) => (
+          <div
+            key={row[0]}
+            className="rounded-lg border border-white/10 bg-[#081224] p-3"
+          >
+            <div className="flex items-center gap-3">
+              <span className={`grid h-7 w-7 place-items-center rounded-full text-xs font-black ${row[4]}`}>
+                {row[0]}
+              </span>
+              <span className="font-black text-white">{row[1]}</span>
+              <span className="ml-auto rounded-full bg-emerald-500/12 px-2 py-1 text-xs font-black text-emerald-300">
+                {row[3]}
+              </span>
+            </div>
+            <div className="mt-3 flex items-center justify-between text-sm">
+              <span className="text-slate-400">Payout</span>
+              <span className="font-black text-white">{row[2]}</span>
+            </div>
+          </div>
+        ))}
+        <div className="flex items-center justify-between rounded-lg border border-emerald-400/20 bg-emerald-500/10 p-3 font-black">
+          <span className="text-white">Total</span>
+          <span className="text-white">1,000.00 USDC</span>
+          <span className="text-emerald-400">100%</span>
+        </div>
+      </div>
+      <div className="mt-4 hidden overflow-hidden rounded-lg border border-white/10 sm:block">
         <div className="grid grid-cols-[0.6fr_1.2fr_1fr_0.7fr] bg-[#081224] px-3 py-3 text-[11px] font-black uppercase text-slate-400">
           <span>Rank</span>
           <span>Winner</span>
@@ -431,7 +510,36 @@ function ParticipantsPanel() {
           <MoreHorizontal size={16} />
         </SmallButton>
       </div>
-      <div className="overflow-x-auto">
+      <div className="grid gap-3 sm:hidden">
+        {players.map((player, index) => (
+          <div
+            key={player}
+            className="rounded-lg border border-white/10 bg-[#081224] p-3"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-blue-500/14 text-xs font-black text-blue-300">
+                  {index + 1}
+                </span>
+                <div>
+                  <p className="font-black text-white">{player}</p>
+                  <p className="text-xs text-slate-400">
+                    May 19, 2024 14:{String(32 + index).padStart(2, "0")}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="rounded-md border border-white/10 px-2 py-1 text-xs text-slate-400"
+              >
+                Remove
+              </button>
+            </div>
+            <p className="mt-3 text-sm font-bold text-emerald-400">✓ Joined</p>
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[620px] text-left text-sm">
           <thead className="text-xs uppercase text-slate-400">
             <tr className="border-b border-white/10">
@@ -590,10 +698,11 @@ export default function DashboardPage() {
     >
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_60%_10%,rgba(37,99,235,0.14),transparent_30%),radial-gradient(circle_at_30%_60%,rgba(246,200,95,0.09),transparent_34%),#050b16]" />
       <TopBar />
+      <MobileQuickNav />
       <div className="flex">
         <Sidebar />
-        <div className="min-w-0 flex-1 p-4 lg:p-6">
-          <div className="mb-5 border-l-4 border-blue-500/70 pl-5">
+        <div className="min-w-0 flex-1 p-3 sm:p-4 lg:p-6">
+          <div className="mb-4 rounded-xl border border-white/10 bg-[#0d1728]/62 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:mb-5 sm:border-l-4 sm:border-blue-500/70 sm:bg-transparent sm:pl-5 sm:shadow-none">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-300">
               Roulette setup page
             </p>
