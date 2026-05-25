@@ -435,9 +435,9 @@ function HeroSection() {
             data-reveal="left"
             className="max-w-2xl text-5xl font-black leading-[0.96] tracking-tight text-[var(--rp-text)] sm:text-7xl lg:text-8xl lg:pt-18"
           >
-            Spin. Win.
+            Spin. Win
             <span className="block bg-[linear-gradient(135deg,#FFE69B,#F6C85F,#B67812)] bg-clip-text text-transparent">
-              Get Paid.
+              Get Paid
             </span>
           </h1>
           <div data-reveal="top" className="mt-4 inline-block">
@@ -451,7 +451,9 @@ function HeroSection() {
               width={820}
               height={820}
               priority
-              className="relative mx-auto h-auto w-full max-w-[280px] object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              className="relative mx-auto h-auto w-full max-w-[280px] select-none object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
             />
           </div>
           <p
@@ -511,7 +513,9 @@ function HeroSection() {
             width={820}
             height={820}
             priority
-            className="relative mx-auto h-auto w-full max-w-[720px] object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            className="relative mx-auto h-auto w-full max-w-[720px] select-none object-contain drop-shadow-[0_0_54px_var(--rp-shadow)]"
           />
         </div>
       </div>

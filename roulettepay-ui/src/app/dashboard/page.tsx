@@ -58,20 +58,20 @@ const auditLog = [
 const topNavItems = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Events", href: "/dashboard" },
-  { label: "Live Rooms", href: "/dashboard" },
+  { label: "Live Rooms", href: "/live-rooms" },
   { label: "Participants", href: "/dashboard" },
   { label: "Treasury", href: "/dashboard" },
 ];
 
 const navItems = [
-  ["Dashboard", Gauge],
-  ["Events", Calendar],
-  ["Roulette Pay", Activity],
-  ["Live Rooms", Radio],
-  ["Participants", Users],
-  ["Treasury", Wallet],
-  ["Transactions", FileText],
-  ["Settings", Settings],
+  ["Dashboard", "/dashboard", Gauge],
+  ["Events", "/dashboard", Calendar],
+  ["Roulette Pay", "/dashboard", Activity],
+  ["Live Rooms", "/live-rooms", Radio],
+  ["Participants", "/dashboard", Users],
+  ["Treasury", "/dashboard", Wallet],
+  ["Transactions", "/dashboard", FileText],
+  ["Settings", "/dashboard", Settings],
 ] as const;
 
 function ThemeToggle() {
@@ -392,13 +392,13 @@ function MobileQuickNav() {
         <WalletStatusCard />
       </div>
       <nav className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {navItems.map(([label, Icon]) => {
+        {navItems.map(([label, href, Icon]) => {
           const active = label === "Roulette Pay";
 
           return (
-            <a
+            <Link
               key={label}
-              href="#admin"
+              href={href}
               className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-black ${active
                 ? "border-blue-500/60 bg-blue-600/18 text-blue-300"
                 : "border-white/10 bg-white/[0.03] text-slate-300"
@@ -406,7 +406,7 @@ function MobileQuickNav() {
             >
               <Icon size={15} />
               {label}
-            </a>
+            </Link>
           );
         })}
       </nav>
@@ -427,13 +427,13 @@ function Sidebar() {
       </Panel>
 
       <nav className="mt-6 space-y-2">
-        {navItems.map(([label, Icon]) => {
+        {navItems.map(([label, href, Icon]) => {
           const active = label === "Roulette Pay";
 
           return (
-            <a
+            <Link
               key={label}
-              href="#admin"
+              href={href}
               className={`flex min-h-12 items-center gap-4 rounded-lg border px-4 text-sm font-bold transition ${active
                 ? "border-blue-500/60 bg-blue-600/16 text-blue-400"
                 : "border-transparent text-slate-300 hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
@@ -441,7 +441,7 @@ function Sidebar() {
             >
               <Icon size={20} />
               {label}
-            </a>
+            </Link>
           );
         })}
       </nav>
