@@ -2,9 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useTheme } from "next-themes";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount, useChainId } from "wagmi";
 import {
   Activity,
-  ArrowLeft,
   Calendar,
   Check,
   ChevronDown,
@@ -14,20 +17,23 @@ import {
   FileText,
   Gauge,
   Lock,
+  Moon,
   MoreHorizontal,
   Radio,
-  Rocket,
   RotateCw,
   Search,
   Settings,
   ShieldCheck,
   Shuffle,
   SlidersHorizontal,
+  Sun,
   Trophy,
   Unlock,
   Users,
   Wallet,
+  X,
 } from "lucide-react";
+import { compactAddress, roulettePayContracts } from "@/src/lib/contracts";
 
 const players = [
   "Ali",
@@ -49,6 +55,14 @@ const auditLog = [
   ["Waiting to Start Spin", "Lock room to proceed", "--", "slate"],
 ];
 
+const topNavItems = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Events", href: "/dashboard" },
+  { label: "Live Rooms", href: "/dashboard" },
+  { label: "Participants", href: "/dashboard" },
+  { label: "Treasury", href: "/dashboard" },
+];
+
 const navItems = [
   ["Dashboard", Gauge],
   ["Events", Calendar],
@@ -59,6 +73,43 @@ const navItems = [
   ["Transactions", FileText],
   ["Settings", Settings],
 ] as const;
+
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const isDark = resolvedTheme !== "light";
+
+  return (
+    <button
+      type="button"
+      aria-label="Toggle color theme"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)] text-sm font-black text-[var(--rp-gold)] backdrop-blur-xl transition hover:border-[var(--rp-border-gold)]"
+    >
+      {isDark ? <Sun size={19} strokeWidth={2.6} /> : <Moon size={19} strokeWidth={2.6} />}
+    </button>
+  );
+}
+
+function BrandLogo({ className = "" }: { className?: string }) {
+  const { resolvedTheme } = useTheme();
+  const logoSrc =
+    resolvedTheme === "light"
+      ? "/logo/png/roulettepay-original.png"
+      : "/logo/png/roulettepay-lightmode.png";
+
+  return (
+    <span className={`relative block h-10 w-[180px] ${className}`}>
+      <Image
+        src={logoSrc}
+        alt="RoulettePay"
+        fill
+        priority
+        sizes="180px"
+        className="object-contain object-left"
+      />
+    </span>
+  );
+}
 
 function Panel({
   children,
@@ -136,51 +187,200 @@ function SmallButton({
   );
 }
 
-function TopBar() {
+function WalletConnectButton({ compact = false }: { compact?: boolean }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#050b16]/92 backdrop-blur-xl">
-      <div className="flex min-h-16 items-center gap-3 px-4 lg:px-6">
-        <Link
-          href="/"
-          className="mr-2 inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-slate-300 lg:hidden"
-          aria-label="Back to landing page"
-        >
-          <ArrowLeft size={18} />
-        </Link>
-        <Link href="/" className="text-xl font-black tracking-tight text-white lg:text-3xl">
-          BraindropHQ
-        </Link>
-        <span className="hidden text-slate-400 sm:inline">~</span>
-        <div className="hidden items-center gap-2 rounded-lg border border-white/10 bg-[#0a1424] px-3 py-2 sm:flex">
-          <Image src="/icon/arbitrum-coin.png" alt="" width={22} height={22} />
-          <span className="text-sm font-bold text-white">Arbitrum</span>
-          <span className="ml-2 h-2 w-2 rounded-full bg-emerald-400" />
+    <ConnectButton.Custom>
+      {({
+        account,
+        chain,
+        mounted,
+        openAccountModal,
+        openChainModal,
+        openConnectModal,
+      }) => {
+        const ready = mounted;
+        const connected = ready && account && chain;
+
+        if (!connected) {
+          return (
+            <button
+              type="button"
+              onClick={openConnectModal}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-blue-400/30 bg-blue-600 px-4 text-sm font-black text-white transition hover:bg-blue-500"
+            >
+              <Wallet size={16} />
+              {compact ? "Connect" : "Connect Wallet"}
+            </button>
+          );
+        }
+
+        if (chain.unsupported) {
+          return (
+            <button
+              type="button"
+              onClick={openChainModal}
+              className="inline-flex h-10 items-center justify-center rounded-xl border border-red-400/40 bg-red-500/15 px-4 text-sm font-black text-red-200"
+            >
+              Wrong Network
+            </button>
+          );
+        }
+
+        return (
+          <div className="inline-flex items-center gap-2">
+            {!compact ? (
+              <button
+                type="button"
+                onClick={openChainModal}
+                className="inline-flex h-10 items-center gap-2 rounded-xl border border-[var(--rp-border-gold)] bg-[var(--rp-surface)] px-3 text-sm font-bold text-[var(--rp-gold)]"
+              >
+                {chain.hasIcon && chain.iconUrl ? (
+                  <Image src={chain.iconUrl} alt="" width={18} height={18} />
+                ) : (
+                  <Image src="/icon/arbitrum-coin.png" alt="" width={18} height={18} />
+                )}
+                {chain.name}
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={openAccountModal}
+              className="inline-flex h-10 items-center gap-2 rounded-xl border border-[var(--rp-border)] bg-[var(--rp-surface)] px-4 text-sm font-bold text-[var(--rp-text)]"
+            >
+              {account.displayName}
+              <Copy size={14} className="text-[var(--rp-muted)]" />
+            </button>
+          </div>
+        );
+      }}
+    </ConnectButton.Custom>
+  );
+}
+
+function WalletStatusCard() {
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const networkLabel =
+    chainId === 42161 ? "Arbitrum One" : chainId === 421614 ? "Arbitrum Sepolia" : "Unknown";
+
+  return (
+    <>
+      <div className="rounded-xl border border-white/10 bg-[#0a1424] px-3 py-2">
+        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+          Network
+        </p>
+        <p className="mt-1 flex items-center gap-2 text-sm font-black text-white">
+          <Image src="/icon/arbitrum-coin.png" alt="" width={20} height={20} />
+          {isConnected ? networkLabel : "Connect first"}
+          <span
+            className={`ml-auto h-2 w-2 rounded-full ${
+              isConnected ? "bg-emerald-400" : "bg-slate-500"
+            }`}
+          />
+        </p>
+      </div>
+      <div className="rounded-xl border border-white/10 bg-[#071622] px-3 py-2">
+        <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+          Wallet
+        </p>
+        <div className="mt-1 flex items-center justify-between gap-2">
+          <p className="truncate text-sm font-black text-emerald-400">
+            {isConnected ? compactAddress(address) : "Not connected"}
+          </p>
+          <WalletConnectButton compact />
         </div>
-        <div className="ml-auto hidden items-center gap-3 md:flex">
-          <div className="inline-flex h-11 items-center gap-3 rounded-lg border border-white/10 bg-[#0a1424] px-4 text-sm font-bold text-slate-200">
-            0x4aE9...7d3f
-            <Copy size={15} className="text-slate-400" />
-          </div>
-          <div className="inline-flex h-11 items-center gap-2 rounded-lg border border-white/10 bg-[#071622] px-4 text-sm font-bold text-emerald-400">
-            <span className="h-2.5 w-2.5 rounded-full border-2 border-emerald-400" />
-            Connected
-          </div>
+      </div>
+    </>
+  );
+}
+
+function ConnectedWalletField() {
+  const { address, isConnected } = useAccount();
+
+  return (
+    <Field
+      label="Connected Wallet"
+      value={isConnected ? compactAddress(address) : "Connect wallet first"}
+      right={<Copy size={15} className="text-slate-400" />}
+    />
+  );
+}
+
+function TopBar() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--rp-border)] bg-[rgba(248,245,237,0.72)] backdrop-blur-2xl dark:bg-[rgba(2,7,17,0.82)]">
+      <nav className="grid h-20 w-full grid-cols-[auto_1fr_auto] items-center gap-4 px-5 sm:px-8">
+        {/* Logo */}
+        <Link href="/" className="justify-self-start">
+          <BrandLogo />
+        </Link>
+
+        {/* Desktop nav links */}
+        <div className="hidden items-center justify-center gap-8 lg:flex">
+          {topNavItems.map((item, index) => (
+            <Link
+              key={item.href + item.label}
+              href={item.href}
+              className={`relative text-sm font-semibold transition hover:text-[var(--rp-gold)] ${index === 0 ? "text-[var(--rp-gold)]" : "text-[var(--rp-text)]"
+                }`}
+            >
+              {item.label}
+              {index === 0 ? (
+                <span className="absolute -bottom-4 left-0 h-px w-full bg-[var(--rp-gold)]" />
+              ) : null}
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop right actions */}
+        <div className="hidden items-center justify-self-end gap-3 lg:flex">
+          <ThemeToggle />
+          <WalletConnectButton />
+        </div>
+
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="flex items-center justify-self-end gap-3 lg:hidden">
+          <ThemeToggle />
           <button
             type="button"
-            className="inline-flex h-11 items-center gap-3 rounded-lg border border-white/10 bg-[#0a1424] px-3 text-sm font-bold text-white"
+            aria-expanded={open}
+            aria-label="Open navigation menu"
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-[var(--rp-border)] bg-[var(--rp-surface)]"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-xs text-slate-900">
-              A
-            </span>
-            Admin
-            <ChevronDown size={16} />
+            {open ? (
+              <X size={18} className="text-[var(--rp-text)]" />
+            ) : (
+              <>
+                <span className="h-0.5 w-5 rounded-full bg-[var(--rp-text)]" />
+                <span className="h-0.5 w-5 rounded-full bg-[var(--rp-text)]" />
+                <span className="h-0.5 w-5 rounded-full bg-[var(--rp-text)]" />
+              </>
+            )}
           </button>
         </div>
-        <SmallButton variant="blue" className="ml-auto px-3 md:ml-0 md:px-4">
-          <Rocket size={17} />
-          <span className="hidden sm:inline">Launch Event</span>
-        </SmallButton>
-      </div>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {open ? (
+        <div className="border-t border-[var(--rp-border)] bg-[var(--rp-bg)] px-5 py-6 lg:hidden">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3">
+            {topNavItems.map((item) => (
+              <Link
+                key={item.href + item.label}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="rounded-xl border border-[var(--rp-border)] bg-[var(--rp-surface)] px-4 py-3 text-sm font-bold text-[var(--rp-text)]"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
@@ -189,25 +389,7 @@ function MobileQuickNav() {
   return (
     <div className="border-b border-white/10 bg-[#07101e]/86 px-3 py-3 backdrop-blur-xl lg:hidden">
       <div className="mb-3 grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-white/10 bg-[#0a1424] px-3 py-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
-            Network
-          </p>
-          <p className="mt-1 flex items-center gap-2 text-sm font-black text-white">
-            <Image src="/icon/arbitrum-coin.png" alt="" width={20} height={20} />
-            Arbitrum
-            <span className="ml-auto h-2 w-2 rounded-full bg-emerald-400" />
-          </p>
-        </div>
-        <div className="rounded-xl border border-white/10 bg-[#071622] px-3 py-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
-            Wallet
-          </p>
-          <p className="mt-1 flex items-center gap-2 truncate text-sm font-black text-emerald-400">
-            <span className="h-2.5 w-2.5 rounded-full border-2 border-emerald-400" />
-            Connected
-          </p>
-        </div>
+        <WalletStatusCard />
       </div>
       <nav className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {navItems.map(([label, Icon]) => {
@@ -217,11 +399,10 @@ function MobileQuickNav() {
             <a
               key={label}
               href="#admin"
-              className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-black ${
-                active
-                  ? "border-blue-500/60 bg-blue-600/18 text-blue-300"
-                  : "border-white/10 bg-white/[0.03] text-slate-300"
-              }`}
+              className={`inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-black ${active
+                ? "border-blue-500/60 bg-blue-600/18 text-blue-300"
+                : "border-white/10 bg-white/[0.03] text-slate-300"
+                }`}
             >
               <Icon size={15} />
               {label}
@@ -253,11 +434,10 @@ function Sidebar() {
             <a
               key={label}
               href="#admin"
-              className={`flex min-h-12 items-center gap-4 rounded-lg border px-4 text-sm font-bold transition ${
-                active
-                  ? "border-blue-500/60 bg-blue-600/16 text-blue-400"
-                  : "border-transparent text-slate-300 hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
-              }`}
+              className={`flex min-h-12 items-center gap-4 rounded-lg border px-4 text-sm font-bold transition ${active
+                ? "border-blue-500/60 bg-blue-600/16 text-blue-400"
+                : "border-transparent text-slate-300 hover:border-white/10 hover:bg-white/[0.03] hover:text-white"
+                }`}
             >
               <Icon size={20} />
               {label}
@@ -364,9 +544,8 @@ function PrizeConfig() {
               <button
                 key={item}
                 type="button"
-                className={`rounded-md px-3 py-2 text-sm font-bold ${
-                  item === "Ranked" ? "bg-blue-600 text-white" : "text-slate-300"
-                }`}
+                className={`rounded-md px-3 py-2 text-sm font-bold ${item === "Ranked" ? "bg-blue-600 text-white" : "text-slate-300"
+                  }`}
               >
                 {item}
               </button>
@@ -451,17 +630,17 @@ function FundingPanel() {
         <p className="pl-7 text-sm text-slate-300">Contract is ready to accept funds</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field
-          label="Connected Wallet"
-          value="0x4aE9...7d3f"
-          right={<Copy size={15} className="text-slate-400" />}
-        />
+        <ConnectedWalletField />
         <Field label="Network" value="Arbitrum" />
       </div>
       <Field
         className="mt-3"
         label="Smart Contract"
-        value="0xd49294d5f60ce698468046e74fccd6..."
+        value={
+          roulettePayContracts.usdc
+            ? compactAddress(roulettePayContracts.usdc)
+            : "Set NEXT_PUBLIC_ROULETTE_PAY_USDC_ADDRESS"
+        }
         right={
           <span className="flex gap-2 text-slate-400">
             <Copy size={15} />
@@ -667,13 +846,12 @@ function AuditPanel() {
         {auditLog.map(([title, detail, time, tone]) => (
           <div key={title} className="grid grid-cols-[12px_34px_1fr_auto] items-start gap-3">
             <span
-              className={`mt-3 h-3 w-3 rounded-full ${
-                tone === "green"
-                  ? "bg-emerald-400"
-                  : tone === "blue"
-                    ? "bg-blue-500"
-                    : "bg-slate-500"
-              }`}
+              className={`mt-3 h-3 w-3 rounded-full ${tone === "green"
+                ? "bg-emerald-400"
+                : tone === "blue"
+                  ? "bg-blue-500"
+                  : "bg-slate-500"
+                }`}
             />
             <span className="grid h-9 w-9 place-items-center rounded-full bg-white/7 text-slate-300">
               <Wallet size={16} />
@@ -699,7 +877,7 @@ export default function DashboardPage() {
       <div className="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_60%_10%,rgba(37,99,235,0.14),transparent_30%),radial-gradient(circle_at_30%_60%,rgba(246,200,95,0.09),transparent_34%),#050b16]" />
       <TopBar />
       <MobileQuickNav />
-      <div className="flex">
+      <div className="flex pt-20">
         <Sidebar />
         <div className="min-w-0 flex-1 p-3 sm:p-4 lg:p-6">
           <div className="mb-4 rounded-xl border border-white/10 bg-[#0d1728]/62 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:mb-5 sm:border-l-4 sm:border-blue-500/70 sm:bg-transparent sm:pl-5 sm:shadow-none">

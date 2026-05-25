@@ -262,7 +262,7 @@ function GoldButton({
 }) {
   const styles =
     variant === "solid"
-      ? "border-transparent bg-[linear-gradient(135deg,#FFE496_0%,#F6C85F_42%,#C99122_100%)] text-[#100B03] shadow-[0_18px_42px_rgba(201,145,34,0.24)] hover:brightness-110"
+      ? "border-transparent bg-[linear-gradient(135deg,#FFE496_0%,#F6C85F_42%,#C99122_100%)] text-[#100B03] shadow-none hover:shadow-[0_4px_12px_rgba(201,145,34,0.24)] hover:brightness-110"
       : "border-[var(--rp-border-gold)] bg-transparent text-[var(--rp-gold)] hover:bg-[rgba(246,200,95,0.1)]";
 
   return (
@@ -483,13 +483,12 @@ function HeroSection() {
             </GoldButton>
           </div>
 
-          <div
-            data-reveal="bottom"
-            data-delay="0.24"
-            className="mt-10 grid gap-4 sm:grid-cols-3"
-          >
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:mt-9">
             {trustFeatures.map((feature) => (
-              <div key={feature.title} className="flex items-center gap-3">
+              <div
+                key={feature.title}
+                className="flex items-center gap-3 rounded-2xl border border-[var(--rp-border)] bg-[var(--rp-surface)] p-3 backdrop-blur-xl lg:border-transparent lg:bg-transparent lg:p-0"
+              >
                 <IconImage src={feature.icon} alt="" className="h-9 w-9" />
                 <div>
                   <p className="text-sm font-black text-[var(--rp-text)]">
